@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Expense Tracker</title>
+    <link rel="icon" type="image/png" href="expense.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -29,8 +30,30 @@
         </div>
 
         <div class="content">
+            <div class="expense-list">
+                <h2>Expense History</h2>
+                
+                <div class="filter-group">
+                    <select id="filterCategory">
+                        <option value="all">All Categories</option>
+                        <option value="food">🍔 Food & Dining</option>
+                        <option value="transport">🚗 Transport</option>
+                        <option value="entertainment">🎬 Entertainment</option>
+                        <option value="shopping">🛍️ Shopping</option>
+                        <option value="bills">📄 Bills & Utilities</option>
+                        <option value="salon">💆‍♂️ Salon & Care</option>
+                        <option value="other">📦 Other</option>
+                    </select>
+                </div>
+
+                <div class="expenses" id="expenseList"></div>
+            </div>
+
             <div class="add-expense">
-                <h2>Add New Expense</h2>
+                <div class="form-header">
+                    <h2>Add Expense</h2>
+                    <span class="close-form" id="closeForm">&times;</span>
+                </div>
                 <div class="error-message" id="errorMessage"></div>
                 
                 <div class="form-group">
@@ -51,6 +74,7 @@
                         <option value="entertainment">🎬 Entertainment</option>
                         <option value="shopping">🛍️ Shopping</option>
                         <option value="bills">📄 Bills & Utilities</option>
+                        <option value="salon">💆‍♂️ Salon & Care</option>
                         <option value="other">📦 Other</option>
                     </select>
                 </div>
@@ -60,30 +84,137 @@
                     <input type="date" id="date">
                 </div>
 
-                <button class="btn btn-primary" id="addBtn">Add Expense</button>
-                <button class="btn btn-danger" id="clearAllBtn">Clear All Data</button>
+                <div class="button-grid">
+                    <button class="btn btn-primary" id="addBtn" type="button">Add</button>
+                    <button class="btn btn-success" id="exportExcelBtn" type="button">Excel</button>
+                    <button class="btn btn-info" id="exportBtn" type="button">Export</button>
+                    <button class="btn btn-warning" id="importBtn" type="button">Import</button>
+                    <button class="btn btn-danger" id="clearAllBtn" type="button">Clear All</button>
+                </div>
             </div>
+        </div>
 
-            <div class="expense-list">
-                <h2>Expense History</h2>
+        <!-- Floating Add Button (Mobile Only) -->
+        <button class="fab" id="fabBtn" type="button">
+            <span>+</span>
+        </button>
+
+        <!-- Form Overlay Background (Mobile Only) -->
+        <div class="form-overlay" id="formOverlay"></div>
+
+        <!-- Export Modal -->
+        <div class="modal" id="exportModal">
+            <div class="modal-content">
+                <span class="close" id="closeExportModal">&times;</span>
+                <h2>Export Expenses</h2>
+                <p>Choose how you want to export your data</p>
                 
-                <div class="filter-group">
-                    <select id="filterCategory">
-                        <option value="all">All Categories</option>
-                        <option value="food">🍔 Food & Dining</option>
-                        <option value="transport">🚗 Transport</option>
-                        <option value="entertainment">🎬 Entertainment</option>
-                        <option value="shopping">🛍️ Shopping</option>
-                        <option value="bills">📄 Bills & Utilities</option>
-                        <option value="other">📦 Other</option>
-                    </select>
+                <div class="export-import-options">
+                    <button class="option-card" id="exportJsonBtn" type="button">
+                        <div class="option-icon">📥</div>
+                        <div class="option-title">Download JSON</div>
+                        <div class="option-desc">Save file to your device</div>
+                    </button>
+                    
+                    <button class="option-card" id="exportQRBtn" type="button">
+                        <div class="option-icon">📱</div>
+                        <div class="option-title">Share via QR</div>
+                        <div class="option-desc">Generate shareable QR code</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Modal -->
+        <div class="modal" id="importModal">
+            <div class="modal-content">
+                <span class="close" id="closeImportModal">&times;</span>
+                <h2>Import Expenses</h2>
+                <p>Choose how you want to import your data</p>
+
+                <div class="export-import-options">
+                    <button class="option-card" id="importFileBtn" type="button">
+                        <div class="option-icon">📄</div>
+                        <div class="option-title">Upload JSON File</div>
+                        <div class="option-desc">Select file from device</div>
+                    </button>
+
+                    <button class="option-card" id="importQRBtn" type="button">
+                        <div class="option-icon">📷</div>
+                        <div class="option-title">Scan QR Code</div>
+                        <div class="option-desc">Receive via WebRTC</div>
+                    </button>
+
+                    <button class="option-card" id="importCodeBtn" type="button">
+                        <div class="option-icon">🔢</div>
+                        <div class="option-title">Enter Code</div>
+                        <div class="option-desc">Type the 6-digit code</div>
+                    </button>
                 </div>
 
-                <div class="expenses" id="expenseList"></div>
+                <!-- Code entry panel (hidden by default) -->
+                <div id="codeEntryPanel" style="display: none; margin-top: 15px;">
+                    <input type="text" id="peerCodeInput" maxlength="6"
+                        placeholder="Enter 6-digit code"
+                        style="width: 100%; padding: 14px; font-size: 1.5rem; letter-spacing: 8px; text-align: center; border: 2px solid #dee2e6; border-radius: 10px;">
+                    <button class="btn btn-primary" id="connectWithCodeBtn" type="button" style="width: 100%; margin-top: 10px;">Connect</button>
+                </div>
+
+                <input type="file" id="jsonFileInput" accept=".json,application/json" style="display: none;">
+                <div id="importJsonStatus"></div>
+            </div>
+        </div>
+
+        <!-- QR Share Modal -->
+        <div class="modal" id="shareQRModal">
+            <div class="modal-content">
+                <span class="close" id="closeShareQRModal">&times;</span>
+                <h2 id="qrModalTitle">Preparing Share...</h2>
+                <p id="qrModalDesc">Setting up secure connection</p>
+
+                <div id="qrLoadingContainer" style="text-align: center; padding: 40px;">
+                    <div class="loader"></div>
+                    <p style="margin-top: 20px; color: #6c757d;">Connecting to relay server...</p>
+                </div>
+
+                <div id="qrResultContainer" style="display: none;">
+                    <div id="qrCodeDisplay" style="text-align: center; margin: 20px 0;"></div>
+
+                    <div style="text-align: center; margin: 10px 0;">
+                        <p style="font-size: 0.85rem; color: #6c757d; margin-bottom: 6px;">Or enter this code on the other device:</p>
+                        <div id="peerCodeDisplay" style="font-size: 2rem; font-weight: bold; letter-spacing: 8px; color: #667eea; background: #f0f2ff; border-radius: 10px; padding: 12px 20px; display: inline-block;"></div>
+                    </div>
+
+                    <div id="shareStatusBox" style="background: #fff3cd; border: 1px solid #ffc107; padding: 12px 15px; border-radius: 8px; margin: 15px 0; font-size: 0.9rem; text-align: center;">
+                        ⏳ Waiting for other device to connect...
+                    </div>
+
+                    <button class="btn btn-danger" id="cancelShareBtn" type="button" style="width: 100%; margin-top: 5px;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Scanner Modal -->
+        <div class="modal" id="qrScannerModal">
+            <div class="modal-content">
+                <span class="close" id="closeQRScannerModal">&times;</span>
+                <h2>Scan QR Code</h2>
+                <p>Point your camera at the QR code</p>
+                
+                <div id="qrScannerContainer">
+                    <video id="qrVideo" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 10px; border: 2px solid #667eea;"></video>
+                    <canvas id="qrCanvas" style="display: none;" willReadFrequently="true"></canvas>
+                </div>
+                
+                <button class="btn btn-danger" id="stopScanBtn" type="button" style="width: 100%; margin-top: 15px;">Stop Camera</button>
+                <div id="qrScanStatus" style="margin-top: 15px;"></div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
