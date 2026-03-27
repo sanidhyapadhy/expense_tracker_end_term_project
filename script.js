@@ -1797,3 +1797,42 @@ loadExpenses();
 
 // Check for auto-import from shared link
 checkForAutoImport();
+
+// ============================================
+// THEME SYSTEM — Light / Dark / System
+// ============================================
+(function initTheme() {
+    const saved = localStorage.getItem('theme') || 'system';
+    applyTheme(saved);
+
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        if (btn.dataset.themeVal === saved) btn.classList.add('active');
+        else btn.classList.remove('active');
+
+        btn.addEventListener('click', () => {
+            const val = btn.dataset.themeVal;
+            localStorage.setItem('theme', val);
+            applyTheme(val);
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // Watch system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (localStorage.getItem('theme') === 'system') applyTheme('system');
+    });
+})();
+
+function applyTheme(val) {
+    if (val === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (val === 'light') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        // system
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) document.documentElement.setAttribute('data-theme', 'dark');
+        else document.documentElement.removeAttribute('data-theme');
+    }
+}
