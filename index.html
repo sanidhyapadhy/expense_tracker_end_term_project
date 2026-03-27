@@ -10,22 +10,32 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 Personal Expense Tracker</h1>
-            <p>Track your spending, understand your habits</p>
-        </div>
+            <div class="header-left">
+                <span class="header-logo">💰</span>
+                <h1>Expense Tracker</h1>
+            </div>
 
-        <div class="summary">
-            <div class="summary-card">
-                <h3>Total Expenses</h3>
-                <div class="amount" id="totalAmount">₹0.00</div>
+            <div class="summary">
+                <div class="summary-card">
+                    <h3>Total</h3>
+                    <div class="amount" id="totalAmount">₹0.00</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Transactions</h3>
+                    <div class="amount" id="totalCount">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Top Category</h3>
+                    <div class="amount" id="highestCategory">—</div>
+                </div>
             </div>
-            <div class="summary-card">
-                <h3>Number of Transactions</h3>
-                <div class="amount" id="totalCount">0</div>
-            </div>
-            <div class="summary-card">
-                <h3>Highest Category</h3>
-                <div class="amount" id="highestCategory">-</div>
+
+            <div class="header-right">
+                <div class="theme-toggle">
+                    <button class="theme-btn active" data-theme-val="light" type="button">Light</button>
+                    <button class="theme-btn" data-theme-val="dark" type="button">Dark</button>
+                    <button class="theme-btn" data-theme-val="system" type="button">System</button>
+                </div>
             </div>
         </div>
 
@@ -85,11 +95,15 @@
                 </div>
 
                 <div class="button-grid">
-                    <button class="btn btn-primary" id="addBtn" type="button">Add</button>
-                    <button class="btn btn-success" id="exportExcelBtn" type="button">Excel</button>
-                    <button class="btn btn-info" id="exportBtn" type="button">Export</button>
-                    <button class="btn btn-warning" id="importBtn" type="button">Import</button>
-                    <button class="btn btn-danger" id="clearAllBtn" type="button">Clear All</button>
+                    <button class="btn btn-primary" id="addBtn" type="button">Add Expense</button>
+                    <div class="btn-row">
+                        <button class="btn btn-success" id="exportExcelBtn" type="button">Excel</button>
+                        <button class="btn btn-info" id="exportBtn" type="button">Export</button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn btn-warning" id="importBtn" type="button">Import</button>
+                        <button class="btn btn-danger" id="clearAllBtn" type="button">Clear All</button>
+                    </div>
                 </div>
             </div>
         </div>
