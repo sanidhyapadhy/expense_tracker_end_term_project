@@ -6,6 +6,8 @@
     --accent-hover:  #4338ca;
     --accent-light:  #eef2ff;
 
+    --header: #fff;
+
     --bg-app:        #f8fafc;
     --bg-surface:    #ffffff;
     --bg-sidebar:    #ffffff;
@@ -38,6 +40,8 @@
     --accent:        #6366f1;
     --accent-hover:  #4f46e5;
     --accent-light:  #1e1b4b;
+
+    --header: #000;
 
     --bg-app:        #0f172a;
     --bg-surface:    #1e293b;
@@ -93,7 +97,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    background: var(--bg-surface);
+    background: var(--header);
     border-bottom: 1px solid var(--border);
     z-index: 100;
     gap: 10px;
